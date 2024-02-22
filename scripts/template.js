@@ -1,7 +1,7 @@
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
-const sqw = 3;
-const sqh = 2;
+const sqw = 17;
+const sqh = 15;
 const speed = 4;
 
 var board = Array.from({ length: sqh }, () => Array(sqw).fill(0));
@@ -32,7 +32,7 @@ function drawGrid() {
 
 function adaptBoardResolution() {
     const windowWidth = window.innerWidth - 24;
-    const windowHeight = window.innerHeight - 32;
+    const windowHeight = window.innerHeight - 24;
 
     if(windowWidth / windowHeight < sqw/sqh) {
         canvas.width = windowWidth;
@@ -67,6 +67,21 @@ function moveSquare() {
     }
 
     board[currentsq.y][currentsq.x] = currentsq.color;
+}
+
+function pushSquares() {
+    outer: for (let i = 0; i < sqh; i++) {
+        for (let j = 0; j < sqw; j++) {
+            if(board[i][j] != 0) {
+                board[i].unshift(0);
+                for(let k = i; k < sqh - 1; k++) {
+                    board[k + 1].unshift(board[k].pop());
+                }
+                board[sqh - 1].pop()
+                break outer;
+            }
+        }
+    }
 }
 
 // function drawChessBackground() {
@@ -108,19 +123,7 @@ function animate() {
                     emptying = true;
                 }
         } else if(board[sqh - 1][sqw - 1] != 0) {
-            // clear squares
-            outer: for (let i = 0; i < sqh; i++) {
-                for (let j = 0; j < sqw; j++) {
-                    if(board[i][j] != 0) {
-                        board[i].unshift(0);
-                        for(let k = i; k < sqh - 1; k++) {
-                            board[k + 1].unshift(board[k].pop());
-                        }
-                        board[sqh - 1].pop()
-                        break outer;
-                    }
-                }
-            }
+            pushSquares();
         } else {
             emptying = false;
             board[0][0] = currentsq.color;
