@@ -99,6 +99,11 @@ function moveSnake() {
     board[snake.y][snake.x] = snake.length;
 }
 
+function oddsPerLength(arrays, index) {
+    const maxLength = arrays.reduce((max, arr) => Math.max(max, arr.length), 0);
+    return arrays[index].length / maxLength;
+}
+
 function eatApple() {
     snake.length++;
     const freeCells = [];
@@ -106,14 +111,25 @@ function eatApple() {
         freeCells.push(board[i].map((element, index) => element == 0 ? index : -1).filter(index => index !== -1));
     }
 
-    y = Math.floor(Math.random() * sqh);
+    const odds = freeCells.map((array, index) => oddsPerLength(freeCells, index));
 
-    while (!freeCells[y]) {
-        y = Math.floor(Math.random() * sqh);
+    const oddsSum = odds.reduce((sum, odd) => sum + odd, 0);
+    const normalizedOdds = odds.map(odd => odd / oddsSum);
+
+    let randomIndex;
+    let randomValue = Math.random();
+    let counter = 0;
+
+    for (let i = 0; i < normalizedOdds.length; i++) {
+        counter += normalizedOdds[i];
+        if (randomValue <= counter) {
+            randomIndex = i;
+            break;
+        }
     }
     
-    x = Math.floor(Math.random() * freeCells[y].length);
-    board[y][freeCells[y][x]] = -1;
+    x = Math.floor(Math.random() * freeCells[randomIndex].length);
+    board[randomIndex][freeCells[randomIndex][x]] = -1;
 }
 
 function reset() {
