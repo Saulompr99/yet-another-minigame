@@ -1,15 +1,15 @@
 .preview {
     height: 100%;
     width: 100%;
-    padding: 20px;
-    filter: brightness(30%);
 }
 
-.preview:hover {
+.col-6:hover {
     filter: brightness(100%);
-    padding: 0;
+    background-color: unset;
 }
 
 .col-6 {
-    height: 100%;
+    border: solid black 20px;
+    filter: brightness(30%);
+    background-color: rgba(0, 0, 0, 0.7);
 }
